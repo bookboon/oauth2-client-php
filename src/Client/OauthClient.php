@@ -231,4 +231,8 @@ class OauthClient implements OauthInterface
 
         return "${protocol}://${host}${path}";
     }
+
+    public function getAct(): ?string {
+        return $this->act;
+    }
 }
