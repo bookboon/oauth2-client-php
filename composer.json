@@ -1,0 +1,22 @@
+{
+    "name": "bookboon/oauth2-client-php",
+    "description": "Booboon OAuth2 CLient",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Bookboon\\OauthClient\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Deus Kane",
+            "email": "dka@bookboon.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "league/oauth2-client": "~2.3",
+        "psr/simple-cache": "^1.0",
+        "psr/log": "^1.1"
+    }
+}
