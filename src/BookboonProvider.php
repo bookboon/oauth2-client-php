@@ -2,6 +2,8 @@
 
 namespace Bookboon\OauthClient;
 
+use GuzzleHttp\Psr7\Request;
+use JsonException;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
@@ -27,21 +29,25 @@ class BookboonProvider extends AbstractProvider
     /** @var array */
     protected $requestOptions = [];
 
+    protected string $authUrl;
+    protected string $tokenUrl;
+    protected string $userinfoUrl;
+    protected ?array $openIdData = null;
+
+    /**
+     * @throws UsageException
+     * @throws JsonException
+     */
     public function __construct(array $options = [], array $collaborators = [])
     {
-        if (isset($options['baseUri']) && $options['baseUri'] !== "") {
-            $parts = explode('://', $options['baseUri']);
-            $this->protocol = $parts[0];
-            $this->host = $parts[1];
-        }
-
-        if ($this->protocol !== 'http' && $this->protocol !== 'https') {
-            throw new UsageException('Invalid protocol');
-        }
-
+        parent::__construct($options, $collaborators);
         $this->requestOptions = $options['requestOptions'] ?? [];
 
-        parent::__construct($options, $collaborators);
+        if (!empty($options['issuerUri'])) {
+            $this->configureFromOpenId($options['issuerUri']);
+        } else {
+            $this->configureFromBaseUri($options['baseUri'] ?? '');
+        }
     }
 
 
@@ -54,7 +60,7 @@ class BookboonProvider extends AbstractProvider
      */
     public function getBaseAuthorizationUrl()
     {
-        return "$this->protocol://$this->host/login/authorize";
+        return $this->authUrl;
     }
 
     /**
@@ -67,7 +73,7 @@ class BookboonProvider extends AbstractProvider
      */
     public function getBaseAccessTokenUrl(array $params)
     {
-        return "$this->protocol://$this->host/login/access_token";
+        return $this->tokenUrl;
     }
 
     /**
@@ -78,7 +84,7 @@ class BookboonProvider extends AbstractProvider
      */
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
-        return "$this->protocol://$this->host/login/userinfo";
+        return $this->userinfoUrl;
     }
 
 
@@ -104,6 +110,14 @@ class BookboonProvider extends AbstractProvider
         }
 
         return parent::getAccessToken($grant, $options);
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getOpenIdData(): ?array
+    {
+        return $this->openIdData;
     }
 
     /**
@@ -220,5 +234,56 @@ class BookboonProvider extends AbstractProvider
         }
 
         return $client_options;
+    }
+
+    /**
+     * @throws JsonException
+     */
+    protected function configureFromOpenId(string $issuerUri) {
+        $openIdUrl = "$issuerUri/.well-known/openid-configuration";
+        $resp = $this->getResponse(
+            new Request('GET', $openIdUrl)
+        );
+
+        if ($resp->getStatusCode() >= 300 || $resp->getStatusCode() < 200) {
+            throw new \Exception(
+                "Bad response code (" .$resp->getStatusCode() .
+                ") while fetching openid configuration from $openIdUrl"
+            );
+        }
+
+        $data = json_decode($resp->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+
+        if (
+            !is_array($data) ||
+            !isset($data['authorization_endpoint'], $data['token_endpoint'], $data['userinfo_endpoint'])
+        ) {
+            throw new \RuntimeException("OpenID config not set correctly");
+        }
+
+        $this->authUrl = $data['authorization_endpoint'] ?? '';
+        $this->tokenUrl = $data['token_endpoint'] ?? '';
+        $this->userinfoUrl = $data['userinfo_endpoint'] ?? '';
+        $this->openIdData = $data;
+    }
+
+    /**
+     * @throws UsageException
+     */
+    protected function configureFromBaseUri(string $baseUri) {
+        $finalUri = 'https://bookboon.com';
+        if ($baseUri !== "") {
+            $parts = explode('://', $baseUri);
+
+            if ($parts[0] !== 'http' && $parts[0] !== 'https') {
+                throw new UsageException('Invalid protocol');
+            }
+
+            $finalUri = $baseUri;
+        }
+
+        $this->authUrl = "$finalUri/login/authorize";
+        $this->tokenUrl = "$finalUri/login/access_token";
+        $this->userinfoUrl = "$finalUri/login/userinfo";
     }
 }
