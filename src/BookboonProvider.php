@@ -48,6 +48,18 @@ class BookboonProvider extends AbstractProvider
         } else {
             $this->configureFromBaseUri($options['baseUri'] ?? '');
         }
+
+        if (isset($options['authorization_endpoint'])) {
+            $this->authUrl = $options['authorization_endpoint'];
+        }
+
+        if (isset($options['token_endpoint'])) {
+            $this->tokenUrl = $options['token_endpoint'];
+        }
+
+        if (isset($options['userinfo_endpoint'])) {
+            $this->userinfoUrl = $options['userinfo_endpoint'];
+        }
     }
 
 
