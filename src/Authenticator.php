@@ -25,6 +25,7 @@ class Authenticator extends OAuth2Authenticator implements AuthenticationEntryPo
     public const AUTH_PROVIDER = 'auth-service';
     public const FIRST_REFERER = 'first_referer';
     public const REMEMBERED_REDIRECT = 'remembered_redirect';
+    public const ERROR_MESSAGE_KEY = 'error_message';
 
     public function __construct(
         protected ClientRegistry $_clientRegistry,
@@ -87,7 +88,7 @@ class Authenticator extends OAuth2Authenticator implements AuthenticationEntryPo
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         if ($this->rejectionRoute !== '') {
-            return new RedirectResponse($this->_router->generate($this->rejectionRoute));
+            return new RedirectResponse($this->_router->generate($this->rejectionRoute, [self::ERROR_MESSAGE_KEY => $exception->getMessage()]));
         }
 
         return new Response("access denied", 401);
