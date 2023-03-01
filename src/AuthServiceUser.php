@@ -85,51 +85,31 @@ class AuthServiceUser implements UserInterface
     {
     }
 
-    /**
-     * @param string $userId
-     * @return AuthServiceUser
-     */
-    public function setUserId(string $userId): AuthServiceUser
+    public function setUserId(string $userId): static
     {
         $this->userId = $userId;
         return $this;
     }
 
-    /**
-     * @param string $username
-     * @return AuthServiceUser
-     */
-    public function setUsername(string $username): AuthServiceUser
+    public function setUsername(string $username): static
     {
         $this->username = $username;
         return $this;
     }
 
-    /**
-     * @param array $roles
-     * @return AuthServiceUser
-     */
-    public function setRoles(array $roles): AuthServiceUser
+    public function setRoles(array $roles): static
     {
         $this->roles = $roles;
         return $this;
     }
 
-    /**
-     * @param string $token
-     * @return AuthServiceUser
-     */
-    public function setToken(string $token): AuthServiceUser
+    public function setToken(string $token): static
     {
         $this->token = $token;
         return $this;
     }
 
-    /**
-     * @param string|null $email
-     * @return AuthServiceUser
-     */
-    public function setEmail(?string $email): AuthServiceUser
+    public function setEmail(?string $email): static
     {
         $this->email = $email;
         return $this;
