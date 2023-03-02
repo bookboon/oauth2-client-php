@@ -17,21 +17,17 @@ class BookboonProvider extends AbstractProvider
 {
     use BearerAuthorizationTrait;
 
-    /** @var string */
-    private $host = 'bookboon.com';
-
-    /** @var string */
-    private $protocol = 'https';
+    private string $host = 'bookboon.com';
+    private string $protocol = 'https';
 
     /** @var array<string> */
-    protected $scope = ['basic'];
+    protected array $scope = ['basic'];
 
-    /** @var array */
-    protected $requestOptions = [];
-
+    protected array $requestOptions = [];
     protected string $authUrl;
     protected string $tokenUrl;
     protected string $userinfoUrl;
+    protected array $grantsWithoutScopes = [OauthGrants::REFRESH_TOKEN, OauthGrants::AUTHORIZATION_CODE];
     protected ?array $openIdData = null;
 
     /**
@@ -113,11 +109,16 @@ class BookboonProvider extends AbstractProvider
      */
     public function getAccessToken($grant, array $options = [])
     {
-        if (!isset($options['scope'])) {
+        /*
+         * Only set default scopes on certain requests. They are ignored on `authorization_code` and
+         * used for deescalation of privileges on `refresh_token`, where absence of `scope` will return an
+         * `access_token` with the same scopes as the `refresh_token`
+         */
+        if (!isset($options['scope']) && !in_array($grant, $this->grantsWithoutScopes)) {
             $options['scope'] = $this->scope;
         }
 
-        if (is_array($options['scope'])) {
+        if (isset($options['scope']) && is_array($options['scope'])) {
             $options['scope'] = implode($this->getScopeSeparator(), $options['scope']);
         }
 
