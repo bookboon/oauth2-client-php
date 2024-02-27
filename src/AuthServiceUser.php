@@ -2,6 +2,7 @@
 
 namespace Bookboon\OauthClient;
 
+use League\OAuth2\Client\Token\AccessTokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class AuthServiceUser implements UserInterface
@@ -9,8 +10,11 @@ class AuthServiceUser implements UserInterface
     private string $userId = '';
     private string $username = '';
     private array $roles = [];
-    private ?string $token = null;
     private ?string $email = null;
+    private ?AccessTokenInterface $token = null;
+    private ?string $applicationId  = null;
+    private ?string $organisationId  = null;
+    private ?string $blobId = null;
 
     /**
      * @return string[]
@@ -53,7 +57,7 @@ class AuthServiceUser implements UserInterface
         return $this->username;
     }
 
-    public function getToken(): ?string
+    public function getAccessToken(): ?AccessTokenInterface
     {
         return $this->token;
     }
@@ -78,10 +82,22 @@ class AuthServiceUser implements UserInterface
         return '';
     }
 
-    /**
-     * @return void
-     */
-    public function eraseCredentials()
+    public function getOrganisationId(): ?string
+    {
+        return $this->organisationId;
+    }
+
+    public function getApplicationId(): ?string
+    {
+        return $this->applicationId;
+    }
+
+    public function getBlobId(): ?string
+    {
+        return $this->blobId;
+    }
+
+    public function eraseCredentials(): void
     {
     }
 
@@ -102,16 +118,33 @@ class AuthServiceUser implements UserInterface
         $this->roles = $roles;
         return $this;
     }
-
-    public function setToken(string $token): static
+    public function setAccessToken(AccessTokenInterface $token): static
     {
         $this->token = $token;
+        return $this;
+    }
+
+    public function setOrganisationId(?string $organisationId): static
+    {
+        $this->organisationId = $organisationId;
+        return $this;
+    }
+
+    public function setApplicationId(?string $applicationId): static
+    {
+        $this->applicationId = $applicationId;
         return $this;
     }
 
     public function setEmail(?string $email): static
     {
         $this->email = $email;
+        return $this;
+    }
+
+    public function setBlobId(?string $blobId): static
+    {
+        $this->blobId = $blobId;
         return $this;
     }
 }
