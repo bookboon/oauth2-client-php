@@ -58,9 +58,12 @@ class Authenticator extends OAuth2Authenticator implements AuthenticationEntryPo
                     $user = (new AuthServiceUser())
                         ->setUserId($resourceOwner->getId())
                         ->setUsername($resourceOwner->getName())
+                        ->setApplicationId($resourceOwner->getApplicationId())
+                        ->setOrganisationId($resourceOwner->getOrganisationId())
+                        ->setBlobId($resourceOwner->getBlobId())
                         ->setRoles($resourceOwner->getRoles())
                         ->setEmail($resourceOwner->getEmail())
-                        ->setToken($accessToken->getToken());
+                        ->setAccessToken($accessToken);
                 }
 
                 return $user;

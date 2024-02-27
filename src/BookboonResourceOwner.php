@@ -70,6 +70,21 @@ class BookboonResourceOwner implements ResourceOwnerInterface
         return $this->getValueByKey($this->response, 'user.roles');
     }
 
+    public function getBlobId()
+    {
+        return $this->getValueByKey($this->response, 'user.blobId');
+    }
+
+    public function getOrganisationId()
+    {
+        return $this->getValueByKey($this->response, 'application.organisation.id');
+    }
+
+    public function getApplicationId()
+    {
+        return $this->getValueByKey($this->response, 'application.id');
+    }
+
     /**
      * @return string[]
      */
