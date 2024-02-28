@@ -7,14 +7,16 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AuthServiceUser implements UserInterface
 {
-    private string $userId = '';
-    private string $username = '';
-    private array $roles = [];
-    private ?string $email = null;
-    private ?AccessTokenInterface $token = null;
-    private ?string $applicationId  = null;
-    private ?string $organisationId  = null;
-    private ?string $blobId = null;
+    protected string $userId = '';
+    protected string $username = '';
+    protected array $roles = [];
+    protected ?string $email = null;
+    protected ?AccessTokenInterface $token = null;
+    protected ?string $applicationId  = null;
+    protected ?string $organisationId  = null;
+    protected ?string $blobId = null;
+    protected string $thumbnail = '';
+    protected array $objectAccess = [];
 
     /**
      * @return string[]
@@ -39,7 +41,7 @@ class AuthServiceUser implements UserInterface
 
     public function getThumbnail(): string
     {
-        return "";
+        return $this->thumbnail;
     }
 
     public function getId(): string
@@ -97,6 +99,11 @@ class AuthServiceUser implements UserInterface
         return $this->blobId;
     }
 
+    public function getObjectAccess(): array
+    {
+        return $this->objectAccess;
+    }
+
     public function eraseCredentials(): void
     {
     }
@@ -145,6 +152,18 @@ class AuthServiceUser implements UserInterface
     public function setBlobId(?string $blobId): static
     {
         $this->blobId = $blobId;
+        return $this;
+    }
+
+    public function setObjectAccess(array $objectAccess): static
+    {
+        $this->objectAccess = $objectAccess;
+        return $this;
+    }
+
+    public function setThumbnail(string $thumbnail): static
+    {
+        $this->thumbnail = $thumbnail;
         return $this;
     }
 }
