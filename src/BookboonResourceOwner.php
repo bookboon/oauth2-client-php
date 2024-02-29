@@ -86,6 +86,14 @@ class BookboonResourceOwner implements ResourceOwnerInterface
     }
 
     /**
+     * @return array<string, array<array{objectId: string, name: string, totalUsers?: float, defaultGroup?: string}>>
+     */
+    public function getObjectAccess()
+    {
+        return $this->getValueByKey($this->response, 'user.objectAccess', []);
+    }
+
+    /**
      * @return string[]
      */
     public function getObjectAccessApplication()

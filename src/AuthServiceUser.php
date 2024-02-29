@@ -99,6 +99,9 @@ class AuthServiceUser implements UserInterface
         return $this->blobId;
     }
 
+    /**
+     * @return array<string, array<array{objectId: string, name: string, totalUsers?: float, defaultGroup?: string}>>
+     */
     public function getObjectAccess(): array
     {
         return $this->objectAccess;
@@ -155,6 +158,10 @@ class AuthServiceUser implements UserInterface
         return $this;
     }
 
+    /**
+     * @param array<string, array<array{objectId: string, name: string, totalUsers?: float, defaultGroup?: string}>> $objectAccess
+     * @return $this
+     */
     public function setObjectAccess(array $objectAccess): static
     {
         $this->objectAccess = $objectAccess;
