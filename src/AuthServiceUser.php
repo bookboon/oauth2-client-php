@@ -7,7 +7,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AuthServiceUser implements UserInterface
 {
-    protected string $userId = '';
+    protected string $id = '';
     protected string $username = '';
     protected array $roles = [];
     protected ?string $email = null;
@@ -46,7 +46,7 @@ class AuthServiceUser implements UserInterface
 
     public function getId(): string
     {
-        return $this->userId;
+        return $this->id;
     }
 
     public function getName(): string
@@ -99,6 +99,9 @@ class AuthServiceUser implements UserInterface
         return $this->blobId;
     }
 
+    /**
+     * @return array<string, array<array{objectId: string, name: string, totalUsers?: float, defaultGroup?: string}>>
+     */
     public function getObjectAccess(): array
     {
         return $this->objectAccess;
@@ -108,9 +111,9 @@ class AuthServiceUser implements UserInterface
     {
     }
 
-    public function setUserId(string $userId): static
+    public function setId(string $id): static
     {
-        $this->userId = $userId;
+        $this->id = $id;
         return $this;
     }
 
@@ -155,6 +158,10 @@ class AuthServiceUser implements UserInterface
         return $this;
     }
 
+    /**
+     * @param array<string, array<array{objectId: string, name: string, totalUsers?: float, defaultGroup?: string}>> $objectAccess
+     * @return $this
+     */
     public function setObjectAccess(array $objectAccess): static
     {
         $this->objectAccess = $objectAccess;
