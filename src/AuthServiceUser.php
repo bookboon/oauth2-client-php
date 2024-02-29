@@ -125,7 +125,7 @@ class AuthServiceUser implements UserInterface
         $this->roles = $roles;
         return $this;
     }
-    public function setAccessToken(AccessTokenInterface $token): static
+    public function setAccessToken(?AccessTokenInterface $token): static
     {
         $this->token = $token;
         return $this;
