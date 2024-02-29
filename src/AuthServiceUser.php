@@ -7,7 +7,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AuthServiceUser implements UserInterface
 {
-    protected string $userId = '';
+    protected string $id = '';
     protected string $username = '';
     protected array $roles = [];
     protected ?string $email = null;
@@ -46,7 +46,7 @@ class AuthServiceUser implements UserInterface
 
     public function getId(): string
     {
-        return $this->userId;
+        return $this->id;
     }
 
     public function getName(): string
@@ -108,9 +108,9 @@ class AuthServiceUser implements UserInterface
     {
     }
 
-    public function setUserId(string $userId): static
+    public function setId(string $id): static
     {
-        $this->userId = $userId;
+        $this->id = $id;
         return $this;
     }
 
